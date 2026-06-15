@@ -1,0 +1,13 @@
+/tmp_innerlink/.env
+/tmp_innerlink/vendor/
+/tmp_innerlink/node_modules/
+/tmp_innerlink/public/storage
+/tmp_innerlink/public/build
+/tmp_innerlink/public/hot
+/tmp_innerlink/storage/*.key
+/tmp_innerlink/storage/pail
+.idea/
+.vscode/
+.DS_Store
+*.log
+Thumbs.db
