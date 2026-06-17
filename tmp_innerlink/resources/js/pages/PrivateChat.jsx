@@ -41,6 +41,17 @@ export default function PrivateChat() {
     }, [messages]);
 
     useEffect(() => {
+        if (echo) return;
+        const interval = setInterval(() => {
+            fetchPrivateMessages(userId).then((data) => {
+                const msgs = Array.isArray(data) ? data : data.data || [];
+                setMessages(msgs);
+            }).catch(() => {});
+        }, 5000);
+        return () => clearInterval(interval);
+    }, [echo, userId]);
+
+    useEffect(() => {
         if (!echo) return;
         const channel = echo.private(`users.${user?.id}`);
 
