@@ -19,8 +19,15 @@ export default function PrivateChat() {
     const [error, setError] = useState('');
 
     const listRef = useRef(null);
+    const isNearBottomRef = useRef(true);
     const tempIdRef = useRef(0);
     const [expandedRead, setExpandedRead] = useState({});
+
+    const handleScroll = useCallback(() => {
+        const el = listRef.current;
+        if (!el) return;
+        isNearBottomRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < 100;
+    }, []);
 
     useEffect(() => {
         setLoading(true);
@@ -37,7 +44,9 @@ export default function PrivateChat() {
     }, [userId, navigate]);
 
     useEffect(() => {
-        listRef.current?.lastElementChild?.scrollIntoView({ behavior: 'smooth' });
+        if (isNearBottomRef.current) {
+            listRef.current?.lastElementChild?.scrollIntoView({ behavior: 'smooth' });
+        }
     }, [messages]);
 
     useEffect(() => {
@@ -115,7 +124,7 @@ export default function PrivateChat() {
     const isOwn = (senderId) => String(senderId) === String(user?.id);
 
     return (
-        <div className="flex-1 flex flex-col h-screen">
+        <div className="flex-1 flex flex-col h-screen overflow-hidden">
             {error && (
                 <div className="px-4 py-2 bg-danger/10 border-b border-danger/20 text-sm text-danger rounded-md">{error}</div>
             )}
@@ -145,7 +154,7 @@ export default function PrivateChat() {
                             </p>
                         </div>
                     </div>
-                    <div className="flex-1 overflow-y-auto p-4 space-y-3" ref={listRef}>
+                    <div className="flex-1 overflow-y-auto p-4 space-y-3" ref={listRef} onScroll={handleScroll}>
                     {loading ? (
                         <div className="flex items-center justify-center h-full">
                             <div className="animate-spin h-8 w-8 border-2 border-primary border-t-transparent rounded-full" />

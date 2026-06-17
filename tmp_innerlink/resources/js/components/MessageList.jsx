@@ -1,15 +1,25 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { formatIST, formatISTTime, formatRelativeTime, isUserOnline } from '../utils/formatDate';
 import SeenByPopup from './SeenByPopup';
 
 export default function MessageList({ messages, readersMap, groupId }) {
     const { user } = useAuth();
+    const listRef = useRef(null);
     const bottomRef = useRef(null);
+    const isNearBottomRef = useRef(true);
     const [seenMessageId, setSeenMessageId] = useState(null);
 
+    const handleScroll = useCallback(() => {
+        const el = listRef.current;
+        if (!el) return;
+        isNearBottomRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < 100;
+    }, []);
+
     useEffect(() => {
-        bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+        if (isNearBottomRef.current) {
+            bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }
     }, [messages]);
 
     if (!messages?.length) {
@@ -21,7 +31,7 @@ export default function MessageList({ messages, readersMap, groupId }) {
     }
 
     return (
-        <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-2 sm:space-y-3">
+        <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-2 sm:space-y-3" ref={listRef} onScroll={handleScroll}>
             {messages.map((msg) => {
                 const isMine = msg.sender_id === user?.id;
                 const readerCount = readersMap?.[msg.id] ?? msg.readers_count ?? 0;

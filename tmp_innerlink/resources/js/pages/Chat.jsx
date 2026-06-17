@@ -163,7 +163,7 @@ export default function Chat() {
     }
 
     return (
-        <div className="flex-1 flex flex-col h-screen">
+        <div className="flex-1 flex flex-col h-screen overflow-hidden">
             {downloadError && (
                 <div className="px-4 py-2 bg-danger/10 border-b border-danger/20 text-sm text-danger rounded-md">
                     {downloadError}
