@@ -9,7 +9,7 @@ RUN npm run build
 FROM composer:2 AS vendor
 WORKDIR /app
 COPY tmp_innerlink/composer.json tmp_innerlink/composer.lock ./
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
 
 FROM php:8.2-fpm-alpine AS runtime
 
@@ -32,6 +32,17 @@ COPY docker/supervisord.conf /etc/supervisord.conf
 COPY docker/start.sh /start.sh
 
 WORKDIR /app
+
+RUN mkdir -p storage/framework/cache/data \
+    storage/framework/sessions \
+    storage/framework/views \
+    storage/logs \
+    bootstrap/cache && \
+    chmod -R 775 storage bootstrap/cache && \
+    php artisan package:discover --ansi && \
+    php artisan config:cache && \
+    php artisan route:cache && \
+    php artisan view:cache
 
 RUN chmod +x /start.sh
 
