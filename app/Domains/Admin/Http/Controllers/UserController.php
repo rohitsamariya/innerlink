@@ -39,7 +39,7 @@ class UserController
             'full_name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email',
             'password' => 'required|string|min:6|max:255',
-            'role' => 'required|string|in:USER,MANAGER',
+            'role' => 'required|string|in:EMPLOYEE,MANAGER',
         ]);
 
         $user = User::create([
@@ -65,7 +65,7 @@ class UserController
         $rules = [
             'full_name' => 'sometimes|string|max:255',
             'email' => 'sometimes|email|max:255|unique:users,email,' . $user->id,
-            'role' => 'sometimes|string|in:USER,MANAGER,ADMIN',
+            'role' => 'sometimes|string|in:EMPLOYEE,MANAGER,ADMIN',
             'password' => 'sometimes|string|min:6|max:255',
         ];
 

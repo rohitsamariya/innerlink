@@ -89,7 +89,7 @@ export default function Dashboard() {
                                         {card.label === 'Online Now' ? (
                                             <>
                                                 {card.label}
-                                                <span className="text-xs text-muted block leading-tight mt-0.5">Admin + Manager + User</span>
+                                                <span className="text-xs text-muted block leading-tight mt-0.5">Admin + Manager + Employee</span>
                                             </>
                                         ) : card.label}
                                     </p>

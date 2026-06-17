@@ -13,6 +13,6 @@ final readonly class UserRegistrationData
         public string $fullName,
         public EmailAddress $email,
         public string $clearPassword,
-        public Role $role = Role::USER
+        public Role $role = Role::EMPLOYEE
     ) {}
 }

@@ -8,7 +8,7 @@ export default function CreateUser() {
     const [fullName, setFullName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [role, setRole] = useState('USER');
+    const [role, setRole] = useState('EMPLOYEE');
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');

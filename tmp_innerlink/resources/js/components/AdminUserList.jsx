@@ -45,7 +45,7 @@ export default function AdminUserList() {
         setEditing(u);
         setEditName(u.full_name || '');
         setEditEmail(u.email || '');
-        setEditRole(u.role || 'USER');
+        setEditRole(u.role || 'EMPLOYEE');
         setEditPassword('');
         setEditError('');
     };

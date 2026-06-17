@@ -27,7 +27,7 @@ return new class extends Migration
         });
 
         // PostgreSQL Specific Constraints & Indexes
-        DB::statement("ALTER TABLE users ADD CONSTRAINT chk_users_role CHECK (role IN ('ADMIN', 'MANAGER', 'USER'))");
+        DB::statement("ALTER TABLE users ADD CONSTRAINT chk_users_role CHECK (role IN ('ADMIN', 'MANAGER', 'EMPLOYEE'))");
         DB::statement("CREATE INDEX idx_users_last_seen_at ON users USING btree (last_seen_at)");
         
         // Ensure exactly one active ADMIN exists

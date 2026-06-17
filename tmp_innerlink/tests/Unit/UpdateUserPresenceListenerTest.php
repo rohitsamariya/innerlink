@@ -28,7 +28,7 @@ class UpdateUserPresenceListenerTest extends TestCase
             $table->string('full_name');
             $table->string('email')->unique();
             $table->string('password');
-            $table->string('role', 20)->default('USER');
+            $table->string('role', 20)->default('EMPLOYEE');
             $table->boolean('is_enabled')->default(true);
             $table->boolean('is_muted')->default(false);
             $table->string('two_factor_secret')->nullable();

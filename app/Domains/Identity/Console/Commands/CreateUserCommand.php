@@ -17,7 +17,7 @@ class CreateUserCommand extends Command
                             {name  : Full name of the user}
                             {email : Email address for the user}
                             {password : Password for the user}
-                            {--role=USER : Role (ADMIN, MANAGER, or USER)}';
+                            {--role=EMPLOYEE : Role (ADMIN, MANAGER, or EMPLOYEE)}';
 
     protected $description = 'Create a user account.';
 
@@ -35,7 +35,7 @@ class CreateUserCommand extends Command
 
         $roleEnum = Role::tryFrom($role);
         if (!$roleEnum) {
-            $this->error("Invalid role: $role. Must be ADMIN, MANAGER, or USER.");
+            $this->error("Invalid role: $role. Must be ADMIN, MANAGER, or EMPLOYEE.");
             return self::FAILURE;
         }
 

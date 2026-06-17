@@ -24,7 +24,7 @@ class ResourcesTest extends TestCase
             'id' => 123,
             'full_name' => 'John Doe',
             'email' => 'john@example.com',
-            'role' => Role::USER,
+            'role' => Role::EMPLOYEE,
             'is_enabled' => true,
             'is_muted' => false,
             'last_seen_at' => now(),
@@ -39,7 +39,7 @@ class ResourcesTest extends TestCase
         $this->assertEquals(123, $array['id']);
         $this->assertEquals('John Doe', $array['full_name']);
         $this->assertEquals('john@example.com', $array['email']);
-        $this->assertEquals('USER', $array['role']);
+        $this->assertEquals('EMPLOYEE', $array['role']);
         $this->assertTrue($array['is_enabled']);
         $this->assertFalse($array['is_muted']);
         $this->assertNotNull($array['last_seen_at']);
