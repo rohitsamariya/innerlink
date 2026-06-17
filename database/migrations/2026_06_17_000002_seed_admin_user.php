@@ -19,6 +19,14 @@ return new class extends Migration
                 'is_muted' => false,
             ]
         );
+
+        $user = DB::table('users')->where('email', 'admin@gmail.com')->first();
+        if ($user) {
+            DB::table('user_status_periods')->updateOrInsert(
+                ['user_id' => $user->id, 'status' => 'ENABLED'],
+                ['start_time' => now(), 'end_time' => null]
+            );
+        }
     }
 
     public function down(): void
