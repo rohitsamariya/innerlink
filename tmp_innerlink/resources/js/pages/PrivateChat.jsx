@@ -203,7 +203,7 @@ export default function PrivateChat() {
                 </div>
 
                 <div className="max-w-3xl w-full mx-auto">
-                    <div className="border-t border-border p-4 flex gap-2 bg-surface">
+                    <div className="border-t border-border p-3 sm:p-4 flex gap-2 items-center bg-surface">
                         <input
                             type="text"
                             value={text}
@@ -211,15 +211,18 @@ export default function PrivateChat() {
                             onKeyDown={handleKeyDown}
                             placeholder="Type a message..."
                             maxLength={10000}
-                            className="flex-1 border border-border bg-transparent px-4 py-2 text-sm text-primary placeholder:text-muted focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent rounded-md"
+                            className="flex-1 border border-border bg-transparent px-3 sm:px-4 py-2.5 sm:py-2 text-[16px] text-primary placeholder:text-muted focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent rounded-md"
                         />
-                        <button
-                            onClick={handleSend}
-                            disabled={!text.trim()}
-                            className="px-4 py-2 bg-accent text-white text-sm font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed rounded-md"
-                        >
-                            Send
-                        </button>
+                        {text.trim() && (
+                            <button
+                                onClick={handleSend}
+                                className="shrink-0 w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center bg-accent text-white rounded-full hover:opacity-90 transition-opacity"
+                            >
+                                <svg className="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 19.5v-15m0 0l-7 7m7-7l7 7" />
+                                </svg>
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>
