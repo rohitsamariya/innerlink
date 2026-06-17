@@ -136,6 +136,22 @@ export default function Chat() {
         }
     }, [groupId, user?.id, group]);
 
+    const scrollRef = useRef(null);
+    const bottomRef = useRef(null);
+    const isNearBottomRef = useRef(true);
+
+    const handleScroll = useCallback(() => {
+        const el = scrollRef.current;
+        if (!el) return;
+        isNearBottomRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < 100;
+    }, []);
+
+    useEffect(() => {
+        if (isNearBottomRef.current) {
+            bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [messages]);
+
     const handleTyping = useCallback((action) => {
         sendTyping(groupId, action).catch(() => {});
     }, [groupId]);
@@ -198,7 +214,7 @@ export default function Chat() {
                         </div>
                     )}
                     <div className="flex-1 flex flex-col min-h-0">
-                        <div className="flex-1 max-w-3xl w-full mx-auto min-h-0 flex flex-col">
+                        <div ref={scrollRef} onScroll={handleScroll} className="flex-1 max-w-3xl w-full mx-auto min-h-0 overflow-y-auto">
                             <div className="sticky top-0 z-10 bg-header/80 backdrop-blur-sm border-b border-border">
                                 <div className="flex items-center gap-2 px-4 py-3">
                                     <button onClick={() => navigate('/groups')} className="text-secondary hover:text-primary shrink-0">
@@ -286,6 +302,7 @@ export default function Chat() {
                                 )}
                             </div>
                             <MessageList messages={messages} groupId={groupId} />
+                            <div ref={bottomRef} />
                         </div>
                         <div className="max-w-3xl w-full mx-auto">
                             <TypingIndicator typingUsers={typingUsers} />

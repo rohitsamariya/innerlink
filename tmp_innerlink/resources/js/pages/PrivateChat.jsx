@@ -18,13 +18,14 @@ export default function PrivateChat() {
     const [text, setText] = useState('');
     const [error, setError] = useState('');
 
-    const listRef = useRef(null);
+    const scrollRef = useRef(null);
+    const bottomRef = useRef(null);
     const isNearBottomRef = useRef(true);
     const tempIdRef = useRef(0);
     const [expandedRead, setExpandedRead] = useState({});
 
     const handleScroll = useCallback(() => {
-        const el = listRef.current;
+        const el = scrollRef.current;
         if (!el) return;
         isNearBottomRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < 100;
     }, []);
@@ -45,7 +46,7 @@ export default function PrivateChat() {
 
     useEffect(() => {
         if (isNearBottomRef.current) {
-            listRef.current?.lastElementChild?.scrollIntoView({ behavior: 'smooth' });
+            bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
         }
     }, [messages]);
 
@@ -130,7 +131,7 @@ export default function PrivateChat() {
             )}
 
             <div className="flex-1 flex flex-col min-h-0">
-                <div className="flex-1 max-w-3xl w-full mx-auto min-h-0 flex flex-col">
+                <div ref={scrollRef} onScroll={handleScroll} className="flex-1 max-w-3xl w-full mx-auto min-h-0 overflow-y-auto">
                     <div className="sticky top-0 z-10 flex items-center gap-3 px-4 py-3 bg-header/80 backdrop-blur-sm border-b border-border">
                         <button onClick={() => navigate('/chats')} className="text-secondary hover:text-primary shrink-0">
                             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
@@ -154,13 +155,13 @@ export default function PrivateChat() {
                             </p>
                         </div>
                     </div>
-                    <div className="flex-1 overflow-y-auto p-4 space-y-3" ref={listRef} onScroll={handleScroll}>
+                    <div className="p-4 space-y-3">
                     {loading ? (
                         <div className="flex items-center justify-center h-full">
                             <div className="animate-spin h-8 w-8 border-2 border-primary border-t-transparent rounded-full" />
                         </div>
                     ) : messages.length === 0 ? (
-                        <div className="flex items-center justify-center h-full text-muted text-sm">
+                        <div className="py-20 text-center text-muted text-sm">
                             No messages yet. Say hello!
                         </div>
                     ) : (
@@ -199,6 +200,7 @@ export default function PrivateChat() {
                             </div>
                         ))
                     )}
+                    <div ref={bottomRef} />
                 </div>
                 </div>
 
