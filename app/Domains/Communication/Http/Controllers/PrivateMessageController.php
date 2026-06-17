@@ -36,13 +36,24 @@ class PrivateMessageController
 
     public function store(Request $request, User $otherUser): JsonResponse
     {
+        $sender = $request->user();
+        $receiver = $otherUser;
+
+        $allowed = $sender->role === Role::ADMIN
+            || ($sender->role === Role::MANAGER && $receiver->role === Role::ADMIN)
+            || ($sender->role === Role::EMPLOYEE && $receiver->role === Role::ADMIN);
+
+        if (!$allowed) {
+            return response()->json(['message' => 'You are not allowed to message this user.'], 403);
+        }
+
         $validated = $request->validate([
             'message_text' => 'required|string|max:10000',
         ]);
 
         $message = PrivateMessage::create([
-            'sender_id' => $request->user()->id,
-            'receiver_id' => $otherUser->id,
+            'sender_id' => $sender->id,
+            'receiver_id' => $receiver->id,
             'message_text' => $validated['message_text'],
         ]);
 
@@ -81,9 +92,12 @@ class PrivateMessageController
     {
         $user = $request->user();
 
-        $targetRole = $user->role === Role::ADMIN ? Role::MANAGER : Role::ADMIN;
+        $users = match ($user->role) {
+            Role::ADMIN => User::whereIn('role', [Role::ADMIN, Role::MANAGER, Role::EMPLOYEE]),
+            default => User::where('role', Role::ADMIN),
+        };
 
-        $users = User::where('role', $targetRole)
+        $users = $users
             ->where('id', '!=', $user->id)
             ->orderBy('full_name')
             ->get();

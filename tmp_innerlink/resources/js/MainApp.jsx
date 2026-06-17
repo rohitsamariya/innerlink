@@ -60,8 +60,8 @@ function AppRoutes() {
                 <Route path="/chat/:groupId" element={<ProtectedRoute><Suspense fallback={<ChatFallback />}><Chat /></Suspense></ProtectedRoute>} />
                 <Route path="/users" element={<ProtectedRoute adminOnly><AppLayout><Suspense fallback={<PageFallback />}><Users /></Suspense></AppLayout></ProtectedRoute>} />
                 <Route path="/users/create" element={<ProtectedRoute adminOnly><AppLayout><Suspense fallback={<PageFallback />}><CreateUser /></Suspense></AppLayout></ProtectedRoute>} />
-                <Route path="/chats" element={<ProtectedRoute managerPlus><AppLayout><Suspense fallback={<PageFallback />}><Chats /></Suspense></AppLayout></ProtectedRoute>} />
-                <Route path="/private-chat/:userId" element={<ProtectedRoute managerPlus><Suspense fallback={<ChatFallback />}><PrivateChat /></Suspense></ProtectedRoute>} />
+                <Route path="/chats" element={<ProtectedRoute><AppLayout><Suspense fallback={<PageFallback />}><Chats /></Suspense></AppLayout></ProtectedRoute>} />
+                <Route path="/private-chat/:userId" element={<ProtectedRoute><Suspense fallback={<ChatFallback />}><PrivateChat /></Suspense></ProtectedRoute>} />
                 <Route path="/health" element={<ProtectedRoute adminOnly><AppLayout><Suspense fallback={<PageFallback />}><Health /></Suspense></AppLayout></ProtectedRoute>} />
                 <Route path="/activity" element={<ProtectedRoute adminOnly><AppLayout><Suspense fallback={<PageFallback />}><UserActivity /></Suspense></AppLayout></ProtectedRoute>} />
                 <Route path="/activity/:userId" element={<ProtectedRoute adminOnly><AppLayout><Suspense fallback={<PageFallback />}><UserActivityDetail /></Suspense></AppLayout></ProtectedRoute>} />
