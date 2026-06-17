@@ -1,56 +1,94 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domains\Identity\Models;
 
+use App\Domains\Identity\Enums\Role;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use App\Domains\Communication\Models\Group;
-use App\Domains\Communication\Models\GroupMembership;
-use App\Domains\Communication\Models\Message;
-use App\Domains\Communication\Models\MessageRead;
-use App\Domains\Communication\Models\PrivateMessage;
-use App\Domains\Admin\Models\AdminAuditLog;
-use App\Domains\Admin\Models\ExportRequest;
-use Illuminate\Database\Eloquent\Builder;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, HasApiTokens;
+
+    protected $table = 'users';
 
     protected $fillable = [
-        'full_name', 'email', 'password', 'role', 'is_enabled', 'is_muted',
-        'two_factor_secret', 'two_factor_confirmed_at', 'current_session_id', 'last_seen_at'
+        'full_name',
+        'email',
+        'password',
+        'role',
+        'is_enabled',
+        'is_muted',
+        'two_factor_secret',
+        'two_factor_confirmed_at',
+        'current_session_id',
+        'last_seen_at',
+        'presence_status',
     ];
 
     protected $hidden = [
-        'password', 'two_factor_secret', 'current_session_id'
+        'password',
+        'two_factor_secret',
     ];
 
     protected function casts(): array
     {
         return [
-            'password' => 'hashed',
+            'role' => Role::class,
             'is_enabled' => 'boolean',
             'is_muted' => 'boolean',
             'two_factor_confirmed_at' => 'datetime',
             'last_seen_at' => 'datetime',
+            'presence_status' => \App\Domains\Identity\Enums\PresenceStatus::class,
         ];
     }
 
-    public function groups() { return $this->hasMany(Group::class, 'created_by'); }
-    public function memberships() { return $this->hasMany(GroupMembership::class); }
-    public function messages() { return $this->hasMany(Message::class, 'sender_id'); }
-    public function privateMessagesSent() { return $this->hasMany(PrivateMessage::class, 'sender_id'); }
-    public function privateMessagesReceived() { return $this->hasMany(PrivateMessage::class, 'receiver_id'); }
-    public function messageReads() { return $this->hasMany(MessageRead::class); }
-    public function invitations() { return $this->hasMany(Invitation::class, 'invited_by'); }
-    public function loginHistories() { return $this->hasMany(LoginHistory::class); }
-    public function statusPeriods() { return $this->hasMany(UserStatusPeriod::class); }
-    public function auditLogs() { return $this->hasMany(AdminAuditLog::class, 'admin_id'); }
-    public function exportRequests() { return $this->hasMany(ExportRequest::class, 'admin_id'); }
+    public function statusPeriods(): HasMany
+    {
+        return $this->hasMany(UserStatusPeriod::class, 'user_id');
+    }
 
-    public function scopeActive(Builder $query) { return $query->where('is_enabled', true); }
-    public function scopeAdmins(Builder $query) { return $query->where('role', 'ADMIN'); }
-    public function scopeOnline(Builder $query) { return $query->where('last_seen_at', '>=', now()->subMinutes(5)); }
+    public function loginHistories(): HasMany
+    {
+        return $this->hasMany(LoginHistory::class, 'user_id');
+    }
+
+    public function groupMemberships(): HasMany
+    {
+        return $this->hasMany(\App\Domains\Communication\Models\GroupMembership::class, 'user_id');
+    }
+
+    public function messages(): HasMany
+    {
+        return $this->hasMany(\App\Domains\Communication\Models\Message::class, 'sender_id');
+    }
+
+    public function messageReads(): HasMany
+    {
+        return $this->hasMany(\App\Domains\Communication\Models\MessageRead::class, 'user_id');
+    }
+
+    public function sentPrivateMessages(): HasMany
+    {
+        return $this->hasMany(\App\Domains\Communication\Models\PrivateMessage::class, 'sender_id');
+    }
+
+    public function receivedPrivateMessages(): HasMany
+    {
+        return $this->hasMany(\App\Domains\Communication\Models\PrivateMessage::class, 'receiver_id');
+    }
+
+    public function adminAuditLogs(): HasMany
+    {
+        return $this->hasMany(\App\Domains\Admin\Models\AdminAuditLog::class, 'admin_id');
+    }
+
+    public function exportRequests(): HasMany
+    {
+        return $this->hasMany(\App\Domains\Admin\Models\ExportRequest::class, 'admin_id');
+    }
 }

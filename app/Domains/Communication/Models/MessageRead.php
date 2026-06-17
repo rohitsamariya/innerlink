@@ -1,15 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domains\Communication\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Domains\Identity\Models\User;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class MessageRead extends Model
 {
+    protected $table = 'message_reads';
+
     public $timestamps = false;
 
-    protected $fillable = ['message_id', 'user_id', 'read_at'];
+    protected $fillable = [
+        'message_id',
+        'user_id',
+        'read_at',
+    ];
 
     protected function casts(): array
     {
@@ -18,6 +27,13 @@ class MessageRead extends Model
         ];
     }
 
-    public function message() { return $this->belongsTo(Message::class); }
-    public function user() { return $this->belongsTo(User::class); }
+    public function message(): BelongsTo
+    {
+        return $this->belongsTo(Message::class, 'message_id');
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

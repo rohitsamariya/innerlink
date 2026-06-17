@@ -1,16 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domains\Communication\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
+use App\Domains\Communication\Exceptions\ImmutableRecordException;
 use App\Domains\Identity\Models\User;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Message extends Model
 {
+    protected $table = 'messages';
+
     public $timestamps = false;
 
-    protected $fillable = ['group_id', 'sender_id', 'message_text', 'sent_at'];
+    protected $fillable = [
+        'group_id',
+        'sender_id',
+        'message_text',
+    ];
 
     protected function casts(): array
     {
@@ -19,12 +29,28 @@ class Message extends Model
         ];
     }
 
-    public function group() { return $this->belongsTo(Group::class); }
-    public function sender() { return $this->belongsTo(User::class, 'sender_id'); }
-    public function reads() { return $this->hasMany(MessageRead::class); }
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(Group::class, 'group_id');
+    }
 
-    public function scopeChronological(Builder $query) { return $query->orderBy('sent_at', 'asc'); }
-    public function scopeSearchText(Builder $query, string $text) { 
-        return $query->whereRaw("to_tsvector('simple', coalesce(message_text, '')) @@ plainto_tsquery('simple', ?)", [$text]);
+    public function sender(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'sender_id');
+    }
+
+    public function readers(): HasMany
+    {
+        return $this->hasMany(MessageRead::class, 'message_id');
+    }
+
+    public function delete()
+    {
+        throw new ImmutableRecordException('Messages are append-only and cannot be deleted.');
+    }
+
+    public function update(array $attributes = [], array $options = [])
+    {
+        throw new ImmutableRecordException('Messages are append-only and cannot be updated.');
     }
 }

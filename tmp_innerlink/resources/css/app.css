@@ -1,11 +1,125 @@
 @import 'tailwindcss';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
+:root {
+    --color-page: #FAFAFA;
+    --color-surface: #FFFFFF;
+    --color-sidebar: #F5F5F5;
+    --color-header: #FFFFFF;
+    --color-primary: #0A0A0A;
+    --color-secondary: #525252;
+    --color-accent: #D97706;
+    --color-border: #E5E5E5;
+    --color-bubble-mine: #F0F0F0;
+    --color-bubble-mine-text: #0A0A0A;
+    --color-bubble-mine-muted: #A3A3A3;
+    --color-bubble-other: #F0F0F0;
+    --color-bubble-other-text: #0A0A0A;
+    --color-bubble-other-muted: #A3A3A3;
+    --color-success: #059669;
+    --color-warning: #D97706;
+    --color-danger: #DC2626;
+    --color-muted: #A3A3A3;
+}
+
+.dark {
+    --color-page: #000000;
+    --color-surface: #121212;
+    --color-sidebar: #0A0A0A;
+    --color-header: #000000;
+    --color-primary: #FAFAFA;
+    --color-secondary: #A3A3A3;
+    --color-accent: #F59E0B;
+    --color-border: #262626;
+    --color-bubble-mine: #1E1E1E;
+    --color-bubble-mine-text: #FAFAFA;
+    --color-bubble-mine-muted: #999999;
+    --color-bubble-other: #1E1E1E;
+    --color-bubble-other-text: #FAFAFA;
+    --color-bubble-other-muted: #999999;
+    --color-success: #10B981;
+    --color-warning: #F59E0B;
+    --color-danger: #EF4444;
+    --color-muted: #525252;
+}
+
 @theme {
+    --color-page: var(--color-page);
+    --color-surface: var(--color-surface);
+    --color-sidebar: var(--color-sidebar);
+    --color-header: var(--color-header);
+    --color-primary: var(--color-primary);
+    --color-secondary: var(--color-secondary);
+    --color-accent: var(--color-accent);
+    --color-border: var(--color-border);
+    --color-bubble-mine: var(--color-bubble-mine);
+    --color-bubble-mine-text: var(--color-bubble-mine-text);
+    --color-bubble-mine-muted: var(--color-bubble-mine-muted);
+    --color-bubble-other: var(--color-bubble-other);
+    --color-bubble-other-text: var(--color-bubble-other-text);
+    --color-bubble-other-muted: var(--color-bubble-other-muted);
+    --color-success: var(--color-success);
+    --color-warning: var(--color-warning);
+    --color-danger: var(--color-danger);
+    --color-muted: var(--color-muted);
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+body {
+    background-color: var(--color-page);
+    color: var(--color-primary);
+}
+
+@keyframes fade-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.page-enter {
+    animation: fade-in 0.25s ease-out;
+}
+
+select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: var(--color-surface);
+    color: var(--color-primary);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='%23525252'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5' /%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1rem;
+    cursor: pointer;
+    user-select: none;
+}
+
+.dark select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='%23A3A3A3'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5' /%3e%3c/svg%3e");
+}
+
+select option {
+    background-color: var(--color-surface);
+    color: var(--color-primary);
+}
+
+select option:hover,
+select option:focus,
+select option:active,
+select option:checked {
+    background: var(--color-accent);
+    color: #FFFFFF;
+}
+
+@supports (selector(select option:checked)) {
+    select option:checked {
+        background: var(--color-accent) !important;
+        color: #FFFFFF !important;
+    }
 }

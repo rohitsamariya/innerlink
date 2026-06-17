@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: innerlink
+    runtime: docker
+    repo: https://github.com/YOUR_USERNAME/innerlink
+    plan: free
+    region: oregon
+    envVars:
+      - key: APP_KEY
+        sync: false
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: APP_URL
+        value: https://innerlink.onrender.com
+      - key: DB_URL
+        fromDatabase:
+          name: innerlink-db
+          property: connectionString
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: SESSION_DRIVER
+        value: database
+      - key: REDIS_CLIENT
+        value: predis
+
+databases:
+  - name: innerlink-db
+    plan: free
+    postgresMajorVersion: "16"
+    ipAllowList: []

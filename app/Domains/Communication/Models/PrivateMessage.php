@@ -1,16 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domains\Communication\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
+
 use App\Domains\Identity\Models\User;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PrivateMessage extends Model
 {
-    public $timestamps = false;
+    protected $table = 'private_messages';
 
-    protected $fillable = ['sender_id', 'receiver_id', 'message_text', 'read_at', 'sent_at'];
+    const UPDATED_AT = null;
+    const CREATED_AT = 'sent_at';
+
+    protected $fillable = [
+        'sender_id',
+        'receiver_id',
+        'message_text',
+        'read_at',
+    ];
 
     protected function casts(): array
     {
@@ -20,16 +31,13 @@ class PrivateMessage extends Model
         ];
     }
 
-    public function sender() { return $this->belongsTo(User::class, 'sender_id'); }
-    public function receiver() { return $this->belongsTo(User::class, 'receiver_id'); }
-
-    public function scopeConversation(Builder $query, $userA, $userB) {
-        return $query->where(function($q) use ($userA, $userB) {
-            $q->where('sender_id', $userA)->where('receiver_id', $userB);
-        })->orWhere(function($q) use ($userA, $userB) {
-            $q->where('sender_id', $userB)->where('receiver_id', $userA);
-        });
+    public function sender(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'sender_id');
     }
 
-    public function scopeUnread(Builder $query) { return $query->whereNull('read_at'); }
+    public function receiver(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'receiver_id');
+    }
 }

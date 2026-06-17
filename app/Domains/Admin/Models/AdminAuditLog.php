@@ -1,16 +1,29 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domains\Admin\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Domains\Admin\Exceptions\AdminViolationException;
 use App\Domains\Identity\Models\User;
-use Exception;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AdminAuditLog extends Model
 {
-    public $timestamps = false;
+    protected $table = 'admin_audit_logs';
 
-    protected $fillable = ['admin_id', 'action', 'target_type', 'target_id', 'payload', 'ip_address', 'user_agent', 'created_at'];
+    const UPDATED_AT = null;
+
+    protected $fillable = [
+        'admin_id',
+        'action',
+        'target_type',
+        'target_id',
+        'payload',
+        'ip_address',
+        'user_agent',
+    ];
 
     protected function casts(): array
     {
@@ -20,16 +33,18 @@ class AdminAuditLog extends Model
         ];
     }
 
-    public function admin() { return $this->belongsTo(User::class, 'admin_id'); }
-
-    // Enforce Immutability
-    public function update(array $attributes = [], array $options = [])
+    public function admin(): BelongsTo
     {
-        throw new Exception('AdminAuditLog is an append-only immutable table.');
+        return $this->belongsTo(User::class, 'admin_id');
     }
 
     public function delete()
     {
-        throw new Exception('AdminAuditLog is an append-only immutable table.');
+        throw new AdminViolationException('Admin audit logs are append-only and cannot be deleted.');
+    }
+
+    public function update(array $attributes = [], array $options = [])
+    {
+        throw new AdminViolationException('Admin audit logs are append-only and cannot be updated.');
     }
 }

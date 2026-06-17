@@ -6,8 +6,16 @@
         "build": "vite build",
         "dev": "vite"
     },
+    "dependencies": {
+        "laravel-echo": "^1.18.1",
+        "pusher-js": "^8.4.0",
+        "react": "^19.2.7",
+        "react-dom": "^19.2.7",
+        "react-router-dom": "^6.30.4"
+    },
     "devDependencies": {
         "@tailwindcss/vite": "^4.0.0",
+        "@vitejs/plugin-react": "^4.7.0",
         "axios": "^1.11.0",
         "concurrently": "^9.0.1",
         "laravel-vite-plugin": "^2.0.0",

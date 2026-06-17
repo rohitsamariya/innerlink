@@ -11,3 +11,5 @@
 .DS_Store
 *.log
 Thumbs.db
+
+dump.rdb
