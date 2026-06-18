@@ -14,6 +14,7 @@ const Chat = lazy(() => import('./pages/Chat'));
 const Chats = lazy(() => import('./pages/Chats'));
 const PrivateChat = lazy(() => import('./pages/PrivateChat'));
 const GroupSettings = lazy(() => import('./pages/GroupSettings'));
+const GroupMembers = lazy(() => import('./pages/GroupMembers'));
 const Users = lazy(() => import('./pages/Users'));
 const CreateUser = lazy(() => import('./pages/CreateUser'));
 const Health = lazy(() => import('./pages/Health'));
@@ -57,6 +58,7 @@ function AppRoutes() {
                 <Route path="/dashboard" element={<ProtectedRoute adminOnly><AppLayout><Suspense fallback={<PageFallback />}><Dashboard /></Suspense></AppLayout></ProtectedRoute>} />
                 <Route path="/groups" element={<ProtectedRoute><AppLayout><Suspense fallback={<PageFallback />}><Groups /></Suspense></AppLayout></ProtectedRoute>} />
                 <Route path="/chat/:groupId/settings" element={<ProtectedRoute adminOnly><AppLayout><Suspense fallback={<PageFallback />}><GroupSettings /></Suspense></AppLayout></ProtectedRoute>} />
+                <Route path="/chat/:groupId/members" element={<ProtectedRoute adminOnly><AppLayout><Suspense fallback={<PageFallback />}><GroupMembers /></Suspense></AppLayout></ProtectedRoute>} />
                 <Route path="/chat/:groupId" element={<ProtectedRoute><Suspense fallback={<ChatFallback />}><Chat /></Suspense></ProtectedRoute>} />
                 <Route path="/users" element={<ProtectedRoute adminOnly><AppLayout><Suspense fallback={<PageFallback />}><Users /></Suspense></AppLayout></ProtectedRoute>} />
                 <Route path="/users/create" element={<ProtectedRoute adminOnly><AppLayout><Suspense fallback={<PageFallback />}><CreateUser /></Suspense></AppLayout></ProtectedRoute>} />
