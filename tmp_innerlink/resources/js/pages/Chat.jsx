@@ -58,15 +58,14 @@ export default function Chat() {
     }, [groupId, navigate]);
 
     useEffect(() => {
-        if (echo) return;
         const interval = setInterval(() => {
             fetchMessages(groupId).then((data) => {
                 const msgs = Array.isArray(data) ? data : data.data || [];
                 setMessages(msgs);
             }).catch(() => {});
-        }, 5000);
+        }, 10000);
         return () => clearInterval(interval);
-    }, [echo, groupId]);
+    }, [groupId]);
 
     useEffect(() => {
         if (!echo) return;

@@ -14,6 +14,12 @@ export default function Dashboard() {
     const [unread, setUnread] = useState(0);
     const [loading, setLoading] = useState(true);
 
+    const fetchStats = useCallback(() => {
+        client.get('/stats')
+            .then((res) => setStats(unwrap(res)))
+            .catch(() => {});
+    }, []);
+
     const fetchUnread = useCallback(() => {
         Promise.all([
             client.get('/private-messages/conversations'),
@@ -28,12 +34,13 @@ export default function Dashboard() {
     }, []);
 
     useEffect(() => {
-        client.get('/stats')
-            .then((res) => setStats(unwrap(res)))
-            .catch(() => {})
-            .finally(() => setLoading(false));
+        setLoading(true);
+        fetchStats();
         fetchUnread();
-    }, [fetchUnread]);
+        const statsTimer = setInterval(fetchStats, 5000);
+        const unreadTimer = setInterval(fetchUnread, 5000);
+        return () => { clearInterval(statsTimer); clearInterval(unreadTimer); };
+    }, [fetchStats, fetchUnread]);
 
     const onlineCount = (() => {
         const n = stats?.online_users ?? 0;

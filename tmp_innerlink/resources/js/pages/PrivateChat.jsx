@@ -51,15 +51,14 @@ export default function PrivateChat() {
     }, [messages]);
 
     useEffect(() => {
-        if (echo) return;
         const interval = setInterval(() => {
             fetchPrivateMessages(userId).then((data) => {
                 const msgs = Array.isArray(data) ? data : data.data || [];
                 setMessages(msgs);
             }).catch(() => {});
-        }, 5000);
+        }, 10000);
         return () => clearInterval(interval);
-    }, [echo, userId]);
+    }, [userId]);
 
     useEffect(() => {
         if (!echo) return;
