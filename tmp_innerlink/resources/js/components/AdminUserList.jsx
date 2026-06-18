@@ -233,8 +233,8 @@ export default function AdminUserList() {
                             <form onSubmit={async (e) => {
                                 e.preventDefault();
                                 setResetError('');
-                                if (!newPassword.trim() || newPassword.length < 6) {
-                                    setResetError('Password must be at least 6 characters.');
+                                if (!newPassword.trim() || newPassword.length < 12 || !/[A-Z]/.test(newPassword) || !/[a-z]/.test(newPassword) || !/[0-9]/.test(newPassword)) {
+                                    setResetError('Password must be at least 12 characters with upper, lower, and a digit.');
                                     return;
                                 }
                                 setResetSaving(true);

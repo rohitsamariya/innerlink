@@ -70,7 +70,7 @@ class MessageRepository implements MessageRepositoryInterface
             $query->where('sent_at', '>=', $since);
         }
 
-        return $query->orderBy('sent_at', 'asc')->get();
+        return $query->orderBy('sent_at', 'desc')->take(500)->reverse()->values();
     }
 
     public function searchMessages(int $groupId, int $viewerId, string $query): iterable
@@ -81,7 +81,7 @@ class MessageRepository implements MessageRepositoryInterface
 
         $builder->whereRaw("to_tsvector('simple', coalesce(message_text, '')) @@ plainto_tsquery('simple', ?)", [$query]);
 
-        return $builder->orderBy('sent_at', 'desc')->get();
+        return $builder->orderBy('sent_at', 'desc')->take(500)->get();
     }
 
     public function markAsRead(int $messageId, int $userId): void

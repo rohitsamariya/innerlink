@@ -37,6 +37,10 @@ class AuthController extends Controller
 
         $user = $userRepository->findById($sessionData->userId);
 
+        if (!$user) {
+            abort(500, 'User not found after authentication.');
+        }
+
         $token = $user->createToken('auth-token')->plainTextToken;
 
         return (new UserResource($user))->additional([

@@ -15,6 +15,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class PrivateMessageController
 {
@@ -28,8 +29,10 @@ class PrivateMessageController
             })->orWhere(function ($q) use ($userId, $otherUser) {
                 $q->where('sender_id', $otherUser->id)->where('receiver_id', $userId);
             })
-            ->orderBy('sent_at')
-            ->get();
+            ->orderBy('sent_at', 'desc')
+            ->take(500)
+            ->reverse()
+            ->values();
 
         return PrivateMessageResource::collection($messages);
     }
@@ -59,7 +62,14 @@ class PrivateMessageController
 
         $message->load('sender', 'receiver');
 
-        broadcast(new PrivateMessageSent($message))->toOthers();
+        try {
+            broadcast(new PrivateMessageSent($message))->toOthers();
+        } catch (\Throwable $e) {
+            Log::warning('Private message broadcast failed', [
+                'message_id' => $message->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
 
         return response()->json([
             'data' => new PrivateMessageResource($message),
