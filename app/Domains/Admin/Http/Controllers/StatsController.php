@@ -15,7 +15,7 @@ class StatsController
     public function index(): JsonResponse
     {
         $stats = Cache::remember('admin.stats', 5, function () {
-            $onlineCutoff = now()->subSeconds(10);
+            $onlineCutoff = now()->subSeconds(60);
             return [
                 'total_users' => User::count(),
                 'online_users' => User::where('last_seen_at', '>', $onlineCutoff)->count(),
