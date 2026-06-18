@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import client from '../api/client';
 import Skeleton from '../components/Skeleton';
+import GroupMemberManager from '../components/GroupMemberManager';
 
 function unwrap(response) {
     return response.data?.data ?? response.data;
@@ -130,6 +131,16 @@ export default function GroupSettings() {
                                 </button>
                             </div>
                         </form>
+                    </div>
+
+                    <div className="bg-surface border border-border rounded-lg">
+                        <div className="px-6 py-4 border-b border-border">
+                            <h3 className="text-base font-semibold text-primary">Members</h3>
+                            <p className="text-sm text-muted mt-0.5">View, add, or remove group participants.</p>
+                        </div>
+                        <div className="px-6 py-5">
+                            <GroupMemberManager groupId={groupId} />
+                        </div>
                     </div>
                 </div>
             </div>
