@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import client from '../api/client';
 import Logo from '../components/Logo';
@@ -13,8 +13,7 @@ export default function Login() {
     const [loading, setLoading] = useState(false);
 
     if (user) {
-        navigate(user.role === 'ADMIN' ? '/dashboard' : '/groups', { replace: true });
-        return null;
+        return <Navigate to={user.role === 'ADMIN' ? '/dashboard' : '/groups'} replace />;
     }
 
     const handleSubmit = async (e) => {
