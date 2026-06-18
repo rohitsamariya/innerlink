@@ -6,6 +6,7 @@ export default function AppLayout({ children }) {
 
     return (
         <div className="flex h-screen bg-page">
+            <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
             <div className="flex-1 flex flex-col min-w-0">
                 <div className="lg:hidden flex items-center h-12 px-4 bg-header border-b border-border">
                     <button onClick={() => setSidebarOpen(true)} className="text-secondary hover:text-primary">
@@ -18,8 +19,6 @@ export default function AppLayout({ children }) {
                 </div>
                 {children}
             </div>
-
-            <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
         </div>
     );
 }
