@@ -138,36 +138,19 @@ export default function Chat() {
 
     const scrollRef = useRef(null);
     const bottomRef = useRef(null);
-    const msgLenRef = useRef(0);
     const isNearBottomRef = useRef(true);
-    const [newMsgCount, setNewMsgCount] = useState(0);
 
     const handleScroll = useCallback(() => {
         const el = scrollRef.current;
         if (!el) return;
-        const nearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 100;
-        isNearBottomRef.current = nearBottom;
-        if (nearBottom) setNewMsgCount(0);
+        isNearBottomRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < 100;
     }, []);
 
     useEffect(() => {
-        const wasNearBottom = isNearBottomRef.current;
-        if (wasNearBottom) {
-            msgLenRef.current = messages.length;
+        if (isNearBottomRef.current) {
             bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-        } else if (messages.length > msgLenRef.current) {
-            setNewMsgCount((c) => c + messages.length - msgLenRef.current);
-            msgLenRef.current = messages.length;
-        } else {
-            msgLenRef.current = messages.length;
         }
     }, [messages]);
-
-    const scrollToBottom = () => {
-        bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-        setNewMsgCount(0);
-        isNearBottomRef.current = true;
-    };
 
     const handleTyping = useCallback((action) => {
         sendTyping(groupId, action).catch(() => {});

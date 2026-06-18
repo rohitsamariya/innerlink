@@ -86,35 +86,3 @@ export function subscribeToAdminDashboard() {
 
     return channel;
 }
-
-export function subscribeToUserCallChannel(userId) {
-    const channel = echo.private(`users.${userId}`);
-
-    channel.listen('.call.offer', (e) => {
-        window.dispatchEvent(new CustomEvent('call:offer', { detail: e }));
-    });
-
-    channel.listen('.call.accepted', (e) => {
-        window.dispatchEvent(new CustomEvent('call:accepted', { detail: e }));
-    });
-
-    channel.listen('.call.rejected', (e) => {
-        window.dispatchEvent(new CustomEvent('call:rejected', { detail: e }));
-    });
-
-    return channel;
-}
-
-export function subscribeToCallChannel(callId) {
-    const channel = echo.private(`calls.${callId}`);
-
-    channel.listen('.call.ice-candidate', (e) => {
-        window.dispatchEvent(new CustomEvent('call:ice-candidate', { detail: e }));
-    });
-
-    channel.listen('.call.ended', (e) => {
-        window.dispatchEvent(new CustomEvent('call:ended', { detail: e }));
-    });
-
-    return channel;
-}

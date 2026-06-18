@@ -91,14 +91,4 @@ class User extends Authenticatable
     {
         return $this->hasMany(\App\Domains\Admin\Models\ExportRequest::class, 'admin_id');
     }
-
-    public function initiatedCalls(): HasMany
-    {
-        return $this->hasMany(\App\Domains\Calling\Models\Call::class, 'caller_id');
-    }
-
-    public function receivedCalls(): HasMany
-    {
-        return $this->hasMany(\App\Domains\Calling\Models\Call::class, 'receiver_id');
-    }
 }

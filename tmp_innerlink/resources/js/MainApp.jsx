@@ -3,7 +3,6 @@ import { Suspense, lazy } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { EchoProvider } from './context/EchoContext';
 import { ThemeProvider } from './context/ThemeContext';
-import { CallProvider } from './context/CallContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import AppLayout from './components/AppLayout';
 import Skeleton from './components/Skeleton';
@@ -20,8 +19,6 @@ const CreateUser = lazy(() => import('./pages/CreateUser'));
 const Health = lazy(() => import('./pages/Health'));
 const UserActivity = lazy(() => import('./pages/UserActivity'));
 const UserActivityDetail = lazy(() => import('./pages/UserActivityDetail'));
-const CallHistory = lazy(() => import('./pages/CallHistory'));
-const CallingOverlay = lazy(() => import('./components/Calling/CallOverlay'));
 
 function PageFallback() {
     return (
@@ -68,7 +65,6 @@ function AppRoutes() {
                 <Route path="/health" element={<ProtectedRoute adminOnly><AppLayout><Suspense fallback={<PageFallback />}><Health /></Suspense></AppLayout></ProtectedRoute>} />
                 <Route path="/activity" element={<ProtectedRoute adminOnly><AppLayout><Suspense fallback={<PageFallback />}><UserActivity /></Suspense></AppLayout></ProtectedRoute>} />
                 <Route path="/activity/:userId" element={<ProtectedRoute adminOnly><AppLayout><Suspense fallback={<PageFallback />}><UserActivityDetail /></Suspense></AppLayout></ProtectedRoute>} />
-                <Route path="/calls" element={<ProtectedRoute><AppLayout><Suspense fallback={<PageFallback />}><CallHistory /></Suspense></AppLayout></ProtectedRoute>} />
                 <Route path="*" element={<RootRedirect />} />
             </Routes>
         </div>
@@ -81,10 +77,7 @@ export default function MainApp() {
             <ThemeProvider>
                 <AuthProvider>
                     <EchoProvider>
-                        <CallProvider>
-                            <AppRoutes />
-                            <CallingOverlay />
-                        </CallProvider>
+                        <AppRoutes />
                     </EchoProvider>
                 </AuthProvider>
             </ThemeProvider>
