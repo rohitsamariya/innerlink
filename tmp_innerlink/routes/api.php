@@ -87,6 +87,17 @@ Route::get('/users/{userId}/login-activity', [\App\Http\Controllers\LoginActivit
 Route::get('/stats', [\App\Domains\Admin\Http\Controllers\StatsController::class, 'index'])
     ->middleware(['auth:sanctum', 'active.user', 'track.last.seen']);
 
+// Calling Routes
+Route::prefix('calls')->middleware(['auth:sanctum', 'active.user', 'track.last.seen'])->group(function () {
+    Route::post('initiate', [\App\Domains\Calling\Http\Controllers\CallController::class, 'initiate']);
+    Route::post('{call}/accept', [\App\Domains\Calling\Http\Controllers\CallController::class, 'accept']);
+    Route::post('{call}/reject', [\App\Domains\Calling\Http\Controllers\CallController::class, 'reject']);
+    Route::post('{call}/end', [\App\Domains\Calling\Http\Controllers\CallController::class, 'end']);
+    Route::post('{call}/ice-candidate', [\App\Domains\Calling\Http\Controllers\CallController::class, 'iceCandidate']);
+    Route::get('history', [\App\Domains\Calling\Http\Controllers\CallController::class, 'history']);
+    Route::get('active', [\App\Domains\Calling\Http\Controllers\CallController::class, 'active']);
+});
+
 // Health Check Routes (no auth — required by load balancers and orchestration probes)
 Route::get('/health/live', [\App\Domains\Health\Http\Controllers\HealthCheckController::class, 'live'])
     ->middleware(['throttle:health', 'health.headers']);

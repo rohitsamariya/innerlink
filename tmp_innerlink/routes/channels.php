@@ -46,3 +46,13 @@ Broadcast::channel('presence-groups.{id}', function (User $user, int $id) {
 Broadcast::channel('admin.dashboard', function (User $user) {
     return $user->is_enabled && $user->role === Role::ADMIN;
 });
+
+Broadcast::channel('calls.{id}', function (User $user, int $id) {
+    if (!$user->is_enabled) {
+        return false;
+    }
+
+    $repo = app(\App\Domains\Calling\Contracts\Repositories\CallRepositoryInterface::class);
+
+    return $repo->isParticipant($id, $user->id);
+});

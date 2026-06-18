@@ -5,6 +5,7 @@ import client from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import { useEcho } from '../context/EchoContext';
 import { formatIST, formatISTTime, formatRelativeTime, isUserOnline } from '../utils/formatDate';
+import CallButton from '../components/Calling/CallButton';
 
 export default function PrivateChat() {
     const { userId } = useParams();
@@ -154,6 +155,7 @@ export default function PrivateChat() {
                                 ) : null}
                             </p>
                         </div>
+                        {otherUser && <CallButton targetUser={otherUser} />}
                     </div>
                     <div className="p-4 space-y-3">
                     {loading ? (
