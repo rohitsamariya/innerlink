@@ -21,6 +21,7 @@ const Health = lazy(() => import('./pages/Health'));
 const UserActivity = lazy(() => import('./pages/UserActivity'));
 const UserActivityDetail = lazy(() => import('./pages/UserActivityDetail'));
 const CallHistory = lazy(() => import('./pages/CallHistory'));
+const CallingOverlay = lazy(() => import('./components/Calling/CallOverlay'));
 
 function PageFallback() {
     return (
@@ -82,6 +83,7 @@ export default function MainApp() {
                     <EchoProvider>
                         <CallProvider>
                             <AppRoutes />
+                            <CallingOverlay />
                         </CallProvider>
                     </EchoProvider>
                 </AuthProvider>

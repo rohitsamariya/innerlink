@@ -1,22 +1,8 @@
-import { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { useEcho } from '../context/EchoContext';
-import { useCall } from '../context/CallContext';
+import { useState } from 'react';
 import Sidebar from './Sidebar';
-import IncomingCallModal from './Calling/IncomingCallModal';
-import ActiveCallBar from './Calling/ActiveCallBar';
 
 export default function AppLayout({ children }) {
-    const { user } = useAuth();
-    const echo = useEcho();
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const { incomingCall, activeCall, remoteStream, localStream, isMicMuted, acceptIncoming, rejectIncoming, hangUp, toggleMute } = useCall();
-
-    useEffect(() => {
-        if (!echo || !user?.id) return;
-        const channel = echo.private(`users.${user.id}`);
-        return () => { echo.leave(`users.${user.id}`); };
-    }, [echo, user?.id]);
 
     return (
         <div className="flex h-screen bg-page">
@@ -34,23 +20,6 @@ export default function AppLayout({ children }) {
             </div>
 
             <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-
-            <IncomingCallModal
-                callData={incomingCall}
-                onAccept={acceptIncoming}
-                onReject={rejectIncoming}
-            />
-
-            {activeCall && (
-                <ActiveCallBar
-                    callData={activeCall}
-                    onEndCall={hangUp}
-                    remoteStream={remoteStream}
-                    localStream={localStream}
-                    isMicMuted={isMicMuted}
-                    onToggleMute={toggleMute}
-                />
-            )}
         </div>
     );
 }
