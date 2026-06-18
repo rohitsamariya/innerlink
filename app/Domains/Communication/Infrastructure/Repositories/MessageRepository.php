@@ -70,7 +70,7 @@ class MessageRepository implements MessageRepositoryInterface
             $query->where('sent_at', '>=', $since);
         }
 
-        return $query->orderBy('sent_at', 'desc')->take(500)->reverse()->values();
+        return $query->orderBy('sent_at', 'desc')->take(500)->get()->reverse()->values();
     }
 
     public function searchMessages(int $groupId, int $viewerId, string $query): iterable

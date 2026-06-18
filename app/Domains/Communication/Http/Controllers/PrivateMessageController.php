@@ -31,6 +31,7 @@ class PrivateMessageController
             })
             ->orderBy('sent_at', 'desc')
             ->take(500)
+            ->get()
             ->reverse()
             ->values();
 
