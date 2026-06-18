@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>InnerLink - Internal Chat, Team Messaging &amp; Collaboration Software</title>
+    <link rel="icon" type="image/png" href="{{ asset('build/assets/images.png') }}">
     @viteReactRefresh
     @vite(['resources/css/app.css', 'resources/js/app.jsx'])
 </head>
