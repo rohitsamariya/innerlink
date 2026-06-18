@@ -45,8 +45,6 @@ export function formatRelativeTime(dateStr) {
 }
 
 export function isUserOnline(user) {
-    if (user?.presence_status === 'ONLINE') return true;
     if (!user?.last_seen_at) return false;
-    const diffMs = Date.now() - new Date(user.last_seen_at).getTime();
-    return diffMs < 10000;
+    return Date.now() - new Date(user.last_seen_at).getTime() < 10000;
 }
