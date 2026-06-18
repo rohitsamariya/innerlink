@@ -1,26 +1,19 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useEcho } from '../context/EchoContext';
+import client from '../api/client';
 
 export default function UserPresence() {
     const { user } = useAuth();
-    const echo = useEcho();
-    const lastUserId = useRef(null);
 
     useEffect(() => {
-        if (!echo || !user?.id) return;
+        if (!user?.id) return;
 
-        if (lastUserId.current && lastUserId.current !== user.id) {
-            echo.leave(`users.${lastUserId.current}`);
-        }
+        const heartbeat = setInterval(() => {
+            client.post('/auth/heartbeat').catch(() => {});
+        }, 2000);
 
-        lastUserId.current = user.id;
-        echo.private(`users.${user.id}`);
-
-        return () => {
-            echo.leave(`users.${user.id}`);
-        };
-    }, [echo, user?.id]);
+        return () => clearInterval(heartbeat);
+    }, [user?.id]);
 
     return null;
 }

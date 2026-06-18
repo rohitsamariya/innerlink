@@ -18,7 +18,10 @@ class TrackLastSeenMiddleware
         if ($user && !$request->routeIs('health.*')) {
             DB::table('users')
                 ->where('id', $user->id)
-                ->update(['last_seen_at' => now()->toIso8601String()]);
+                ->update([
+                    'last_seen_at' => now()->toIso8601String(),
+                    'presence_status' => 'ONLINE',
+                ]);
         }
 
         return $next($request);

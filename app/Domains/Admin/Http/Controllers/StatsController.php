@@ -15,10 +15,11 @@ class StatsController
     public function index(): JsonResponse
     {
         $stats = Cache::remember('admin.stats', 5, function () {
+            $onlineCutoff = now()->subSeconds(10);
             return [
                 'total_users' => User::count(),
-                'online_users' => User::where('presence_status', 'ONLINE')->count(),
-                'online_user_names' => User::where('presence_status', 'ONLINE')->orderBy('full_name')->pluck('full_name'),
+                'online_users' => User::where('last_seen_at', '>', $onlineCutoff)->count(),
+                'online_user_names' => User::where('last_seen_at', '>', $onlineCutoff)->orderBy('full_name')->pluck('full_name'),
                 'active_groups' => Group::where('is_enabled', true)->count(),
                 'new_messages' => Message::whereDate('sent_at', today())->count(),
             ];

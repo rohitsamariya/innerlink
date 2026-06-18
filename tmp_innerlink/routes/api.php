@@ -22,6 +22,10 @@ Route::prefix('auth')->group(function () {
 
     Route::get('me', [AuthController::class, 'me'])
         ->middleware(['auth:sanctum', 'active.user', 'track.last.seen']);
+
+    Route::post('heartbeat', function () {
+        return response()->noContent();
+    })->middleware(['auth:sanctum', 'active.user', 'track.last.seen']);
 });
 
 // Groups Routes
