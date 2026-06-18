@@ -15,7 +15,7 @@ export default function Dashboard() {
     const [loading, setLoading] = useState(true);
 
     const fetchStats = useCallback(() => {
-        client.get('/stats')
+        return client.get('/stats')
             .then((res) => setStats(unwrap(res)))
             .catch(() => {});
     }, []);
@@ -34,8 +34,7 @@ export default function Dashboard() {
     }, []);
 
     useEffect(() => {
-        setLoading(true);
-        fetchStats();
+        fetchStats().finally(() => setLoading(false));
         fetchUnread();
         const statsTimer = setInterval(fetchStats, 5000);
         const unreadTimer = setInterval(fetchUnread, 5000);
