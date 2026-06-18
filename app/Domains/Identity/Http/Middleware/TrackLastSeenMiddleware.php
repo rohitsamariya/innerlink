@@ -7,6 +7,7 @@ namespace App\Domains\Identity\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class TrackLastSeenMiddleware
@@ -16,12 +17,19 @@ class TrackLastSeenMiddleware
         $user = $request->user();
 
         if ($user && !$request->routeIs('health.*')) {
-            DB::table('users')
-                ->where('id', $user->id)
-                ->update([
-                    'last_seen_at' => now()->toIso8601String(),
-                    'presence_status' => 'ONLINE',
+            try {
+                DB::table('users')
+                    ->where('id', $user->id)
+                    ->update([
+                        'last_seen_at' => now()->toIso8601String(),
+                        'presence_status' => 'ONLINE',
+                    ]);
+            } catch (\Throwable $e) {
+                Log::error('TrackLastSeenMiddleware failed', [
+                    'user_id' => $user->id,
+                    'error' => $e->getMessage(),
                 ]);
+            }
         }
 
         return $next($request);
