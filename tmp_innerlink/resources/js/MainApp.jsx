@@ -5,6 +5,7 @@ import { EchoProvider } from './context/EchoContext';
 import { ThemeProvider } from './context/ThemeContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import AppLayout from './components/AppLayout';
+import UserPresence from './components/UserPresence';
 import Skeleton from './components/Skeleton';
 
 const Login = lazy(() => import('./pages/Login'));
@@ -53,6 +54,7 @@ function RootRedirect() {
 function AppRoutes() {
     return (
         <div className="page-enter">
+            <UserPresence />
             <Routes>
                 <Route path="/login" element={<Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="animate-spin h-8 w-8 border-2 border-primary border-t-transparent rounded-full" /></div>}><Login /></Suspense>} />
                 <Route path="/dashboard" element={<ProtectedRoute adminOnly><AppLayout><Suspense fallback={<PageFallback />}><Dashboard /></Suspense></AppLayout></ProtectedRoute>} />

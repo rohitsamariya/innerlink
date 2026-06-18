@@ -14,7 +14,7 @@ class StatsController
 {
     public function index(): JsonResponse
     {
-        $stats = Cache::remember('admin.stats', 30, function () {
+        $stats = Cache::remember('admin.stats', 5, function () {
             return [
                 'total_users' => User::count(),
                 'online_users' => User::where('presence_status', 'ONLINE')->count(),
