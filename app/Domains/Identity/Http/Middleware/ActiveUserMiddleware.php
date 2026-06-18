@@ -7,6 +7,7 @@ namespace App\Domains\Identity\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Laravel\Sanctum\PersonalAccessToken;
 use Symfony\Component\HttpFoundation\Response;
 
 class ActiveUserMiddleware
@@ -19,6 +20,10 @@ class ActiveUserMiddleware
         $user = $request->user();
 
         if ($user && !$user->is_enabled) {
+            PersonalAccessToken::where('tokenable_id', $user->id)
+                ->where('tokenable_type', get_class($user))
+                ->delete();
+
             Auth::logout();
             
             if ($request->hasSession()) {

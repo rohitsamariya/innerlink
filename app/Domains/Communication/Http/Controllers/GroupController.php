@@ -8,6 +8,7 @@ use App\Domains\Communication\Actions\CreateGroupAction;
 use App\Domains\Communication\Http\Requests\StoreGroupRequest;
 use App\Domains\Communication\Http\Resources\GroupResource;
 use App\Domains\Communication\Models\Group;
+use App\Domains\Identity\Enums\Role;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -24,14 +25,14 @@ class GroupController
 
         $groups = Group::whereHas('memberships', function ($query) use ($userId) {
             $query->where('user_id', $userId)->whereNull('left_at');
-        })->get();
-
-        $groups->loadCount(['messages as unread_count' => function ($query) use ($userId) {
+        })
+        ->withCount(['messages as unread_count' => function ($query) use ($userId) {
             $query->where('sender_id', '!=', $userId)
                   ->whereDoesntHave('readers', function ($q) use ($userId) {
                       $q->where('user_id', $userId);
                   });
-        }]);
+        }])
+        ->paginate(50);
 
         return GroupResource::collection($groups)->response();
     }
@@ -61,6 +62,10 @@ class GroupController
             'name' => 'sometimes|string|max:100',
             'is_enabled' => 'sometimes|boolean',
         ]);
+
+        if (isset($validated['is_enabled']) && $request->user()->role !== Role::ADMIN) {
+            abort(403, 'Only admins can enable or disable groups.');
+        }
 
         if (isset($validated['name'])) {
             $group->name = $validated['name'];

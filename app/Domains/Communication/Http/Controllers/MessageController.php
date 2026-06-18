@@ -57,11 +57,11 @@ class MessageController extends Controller
         SendMessageRequest $request,
         DispatchMessageAction $action
     ): MessageResource {
-        Gate::authorize('view', $group);
-
-        if ($group->is_enabled === false) {
+        if (!$group->is_enabled) {
             abort(403, 'This group is disabled.');
         }
+
+        Gate::authorize('view', $group);
 
         $messageData = new MessageData(
             groupId: $group->id,

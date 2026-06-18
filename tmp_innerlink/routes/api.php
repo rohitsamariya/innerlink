@@ -14,7 +14,8 @@ use App\Domains\Admin\Http\Controllers\ExportController;
 
 // Auth Routes
 Route::prefix('auth')->group(function () {
-    Route::post('login', [AuthController::class, 'login']);
+    Route::post('login', [AuthController::class, 'login'])
+        ->middleware(['throttle:5,60']);
     
     Route::post('logout', [AuthController::class, 'logout'])
         ->middleware(['auth:sanctum', 'active.user', 'track.last.seen']);
@@ -30,7 +31,8 @@ Route::prefix('groups')->middleware(['auth:sanctum', 'active.user', 'track.last.
     Route::get('{group}', [\App\Domains\Communication\Http\Controllers\GroupController::class, 'show']);
     Route::get('{group}/messages/search', [MessageController::class, 'search']);
     Route::get('{group}/messages', [MessageController::class, 'index']);
-    Route::post('{group}/messages', [MessageController::class, 'store']);
+    Route::post('{group}/messages', [MessageController::class, 'store'])
+        ->middleware(['throttle:30,60']);
     Route::post('{group}/messages/{message}/deliver', [MessageController::class, 'deliver']);
     Route::post('{group}/messages/read', [MessageController::class, 'markRead']);
     Route::get('{group}/messages/{message}/readers', [MessageController::class, 'readers']);
@@ -60,7 +62,8 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'active.user', 'admin.only',
 // Users management (admin only, frontend URL /users)
 Route::prefix('users')->middleware(['auth:sanctum', 'active.user', 'admin.only', 'track.last.seen'])->group(function () {
     Route::get('/', [\App\Domains\Admin\Http\Controllers\UserController::class, 'index']);
-    Route::post('/', [\App\Domains\Admin\Http\Controllers\UserController::class, 'store']);
+    Route::post('/', [\App\Domains\Admin\Http\Controllers\UserController::class, 'store'])
+        ->middleware(['throttle:10,60']);
     Route::patch('{user}/toggle-status', [\App\Domains\Admin\Http\Controllers\UserController::class, 'toggleStatus']);
     Route::patch('{user}', [\App\Domains\Admin\Http\Controllers\UserController::class, 'update']);
 });

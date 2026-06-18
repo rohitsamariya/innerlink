@@ -100,13 +100,21 @@ class PrivateMessageController
         $users = $users
             ->where('id', '!=', $user->id)
             ->orderBy('full_name')
-            ->get();
+            ->paginate(50);
 
         return UserResource::collection($users);
     }
 
-    public function profile(User $user): UserResource
+    public function profile(Request $request, User $user): UserResource
     {
+        $currentUser = $request->user();
+
+        $allowed = $currentUser->id === $user->id
+            || $currentUser->role === Role::ADMIN
+            || $user->role === Role::ADMIN;
+
+        abort_unless($allowed, 403, 'You are not allowed to view this profile.');
+
         return new UserResource($user);
     }
 
@@ -114,33 +122,43 @@ class PrivateMessageController
     {
         $userId = $request->user()->id;
 
-        $otherUserIds = PrivateMessage::where('sender_id', $userId)
+        $partnerIds = PrivateMessage::where('sender_id', $userId)
             ->orWhere('receiver_id', $userId)
+            ->selectRaw('DISTINCT CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END as id', [$userId])
+            ->pluck('id');
+
+        if ($partnerIds->isEmpty()) {
+            return response()->json(['data' => []]);
+        }
+
+        $users = User::whereIn('id', $partnerIds)->get()->keyBy('id');
+
+        $latestMessageIds = PrivateMessage::where(function ($q) use ($userId) {
+                $q->where('sender_id', $userId)->orWhere('receiver_id', $userId);
+            })
+            ->selectRaw('MAX(id) as id')
+            ->groupBy(DB::raw('LEAST(sender_id, receiver_id), GREATEST(sender_id, receiver_id)'))
+            ->pluck('id');
+
+        $latestMessages = PrivateMessage::whereIn('id', $latestMessageIds)
             ->get()
-            ->map(fn ($m) => $m->sender_id === $userId ? $m->receiver_id : $m->sender_id)
-            ->unique()
-            ->values();
+            ->keyBy(fn ($m) => $m->sender_id === $userId ? $m->receiver_id : $m->sender_id);
+
+        $unreadCounts = PrivateMessage::where('receiver_id', $userId)
+            ->whereNull('read_at')
+            ->selectRaw('sender_id, COUNT(*) as count')
+            ->groupBy('sender_id')
+            ->pluck('count', 'sender_id');
 
         $result = [];
-        foreach ($otherUserIds as $otherId) {
-            $lastMessage = PrivateMessage::where(function ($q) use ($userId, $otherId) {
-                $q->where('sender_id', $userId)->where('receiver_id', $otherId);
-            })->orWhere(function ($q) use ($userId, $otherId) {
-                $q->where('sender_id', $otherId)->where('receiver_id', $userId);
-            })->orderBy('sent_at', 'desc')->first();
-
-            $unreadCount = PrivateMessage::where('sender_id', $otherId)
-                ->where('receiver_id', $userId)
-                ->whereNull('read_at')
-                ->count();
-
-            $otherUser = User::find($otherId);
+        foreach ($partnerIds as $partnerId) {
+            $lastMessage = $latestMessages->get($partnerId);
 
             $result[] = [
-                'user' => $otherUser ? new UserResource($otherUser) : null,
+                'user' => $users->get($partnerId) ? new UserResource($users->get($partnerId)) : null,
                 'last_message' => $lastMessage?->message_text,
                 'last_message_at' => $lastMessage?->sent_at?->toIso8601String(),
-                'unread_count' => $unreadCount,
+                'unread_count' => (int) ($unreadCounts->get($partnerId) ?? 0),
             ];
         }
 

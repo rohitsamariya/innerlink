@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domains\Communication\Policies;
 
 use App\Domains\Communication\Models\Group;
+use App\Domains\Identity\Enums\Role;
 use App\Domains\Identity\Models\User;
 
 use App\Domains\Communication\Contracts\Repositories\GroupMembershipRepositoryInterface;
@@ -21,6 +22,10 @@ class GroupPolicy
     public function view(User $user, Group $group): bool
     {
         if (!$user->is_enabled) {
+            return false;
+        }
+
+        if (!$group->is_enabled && $user->role !== Role::ADMIN) {
             return false;
         }
 

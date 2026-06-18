@@ -7,7 +7,9 @@ namespace App\Domains\Communication\Actions;
 use App\Domains\Communication\Contracts\Repositories\GroupMembershipRepositoryInterface;
 use App\Domains\Communication\Contracts\Repositories\MessageRepositoryInterface;
 use App\Domains\Communication\Events\MessageDelivered;
+use App\Domains\Communication\Exceptions\NotGroupMemberException;
 use App\Domains\Identity\Contracts\Repositories\UserRepositoryInterface;
+use App\Domains\Identity\Exceptions\UserNotFoundException;
 use Illuminate\Support\Facades\DB;
 
 final readonly class MarkMessageDeliveredAction
@@ -21,7 +23,7 @@ final readonly class MarkMessageDeliveredAction
     public function execute(int $messageId, int $groupId, int $userId): void
     {
         if (!$this->membershipRepository->isUserActiveMemberOfGroup($userId, $groupId)) {
-            throw new \RuntimeException('User is not an active member of this group');
+            throw new NotGroupMemberException('User is not an active member of this group');
         }
 
         $message = $this->messageRepository->findById($messageId);
@@ -31,7 +33,7 @@ final readonly class MarkMessageDeliveredAction
 
         $user = $this->userRepository->findById($userId);
         if (!$user) {
-            throw new \RuntimeException('User not found');
+            throw UserNotFoundException::forId($userId);
         }
 
         DB::afterCommit(function () use ($messageId, $groupId, $userId, $user): void {

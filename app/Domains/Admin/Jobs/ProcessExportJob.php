@@ -13,6 +13,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Throwable;
 
 class ProcessExportJob implements ShouldQueue
@@ -43,7 +44,7 @@ class ProcessExportJob implements ShouldQueue
     public function __construct(
         public readonly int $exportRequestId
     ) {
-        $this->connection = 'redis';
+        $this->connection = config('queue.default');
     }
 
     /**
@@ -60,9 +61,9 @@ class ProcessExportJob implements ShouldQueue
 
             $exportRepository->markProcessing($this->exportRequestId);
 
-            // TODO: Extract actual format/generation logic to a Domain Service in the future
-            // For now, simulate generation logic per Phase 9 requirements.
             $filePath = 'exports/export_' . $this->exportRequestId . '.tmp';
+
+            Storage::disk(config('filesystems.default'))->put($filePath, '');
 
             $exportRepository->markCompleted($this->exportRequestId, $filePath);
 

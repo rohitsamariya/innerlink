@@ -15,7 +15,7 @@ class UserController
 {
     public function index(): AnonymousResourceCollection
     {
-        return UserResource::collection(User::orderBy('id')->get());
+        return UserResource::collection(User::orderBy('id')->paginate(100));
     }
 
     public function toggleStatus(User $user): JsonResponse
@@ -38,7 +38,7 @@ class UserController
         $validated = $request->validate([
             'full_name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email',
-            'password' => 'required|string|min:6|max:255',
+            'password' => 'required|string|min:12|max:255|regex:/[A-Z]/|regex:/[a-z]/|regex:/[0-9]/',
             'role' => 'required|string|in:EMPLOYEE,MANAGER',
         ]);
 
@@ -66,7 +66,7 @@ class UserController
             'full_name' => 'sometimes|string|max:255',
             'email' => 'sometimes|email|max:255|unique:users,email,' . $user->id,
             'role' => 'sometimes|string|in:EMPLOYEE,MANAGER,ADMIN',
-            'password' => 'sometimes|string|min:6|max:255',
+            'password' => 'sometimes|string|min:12|max:255|regex:/[A-Z]/|regex:/[a-z]/|regex:/[0-9]/',
         ];
 
         $validated = $request->validate($rules);
